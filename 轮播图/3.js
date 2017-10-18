@@ -90,22 +90,5 @@ var autoPlay = function() {
 
 bindEventSlide()
 bindEventIndicator()
-// autoPlay()
+autoPlay()
 
-// 先写出来, 然后不断地把程序改得更好, 这个过程叫 重构
-
-// 第一个参数是定时会被调用的函数
-// 第二个参数是延迟的时间, 以毫秒为单位, 1000 毫秒等于 1 秒
-// setTimeout 只会执行一次
-// log('开始时间', new Date())
-// setTimeout(function() {
-//     log('结束时间', new Date())
-// }, 2000)
-//
-// // setInterval 会无限执行
-// // setInterval 和  setTimeout 函数都有一个返回值
-// // 返回值可以用来清除定时函数
-// var clockId = setInterval(function() {
-//     log('时间到', new Date())
-// }, 1000)
-// log('用来删除定时器的 id', clockId)
