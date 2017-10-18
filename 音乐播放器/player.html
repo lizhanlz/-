@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>player</title>
+        <style>
+            .viewport {
+                width: 414px;
+    			height: 736px;
+                background-image: url(3.jpeg);
+    			position: relative;
+            }
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+            .audio-style {
+                position: absolute;
+    		    bottom: 235px;
+    		    left: 57px;
+            }
+            .currentTime-style {
+                display: inline-block;
+    			width: 40px;
+    			height: 20px;
+    			position: absolute;
+    			bottom: 200px;
+    			left: 30px;
+            }
+            .duration-style {
+                display: inline-block;
+    			width: 40px;
+    			height: 20px;
+    			position: absolute;
+    			bottom: 200px;
+    			right: 50px;
+            }
+            .button-stlye {
+                color: #FFFFFF;
+                background-color: #1E90FF;
+                border-color: #EEE;
+                font-weight: 300;
+                font-size: 14px;
+                text-decoration: none;
+                text-align: center;
+                position: absolute;
+                bottom: 130px;
+                line-height: 40px;
+                height: 40px;
+                padding: 0 40px;
+                margin: 0;
+                display: inline-block;
+                appearance: none;
+                cursor: pointer;
+                border: none;
+                border-radius:25px;
+                transition: 1s;
+            }
+            .button-stlye:hover {
+                background-color: #3A5FCD;
+            }
+    		.button-play {
+    			left: 0px;
+    		}
+    		.button-pause {
+    			left: 95px;
+    		}
+    		.button-playerList {
+                right: 115px;
+    		}
+            .button-fun {
+                right: 0px;
+            }
+            .funList-style {
+                font-weight: 300;
+                text-decoration: none;
+                text-align: center;
+                line-height: 40px;
+                position: absolute;
+                bottom: 90px;
+                right: -10px;
+                height: 40px;
+                padding: 0 40px;
+                margin: 0;
+                display: inline-block;
+                appearance: none;
+                cursor: pointer;
+                border: none;
+                box-sizing: border-box;
+                transition-property: all;
+            }
+            .class-funList-style {
+    			height: 40px;
+    			border-bottom: 1px solid black;
+    			text-align: center;
+
+    		}
+            .songs-style {
+                font-weight: 300;
+                text-decoration: none;
+                text-align: center;
+                line-height: 40px;
+                position: absolute;
+                bottom: 90px;
+                right: 68px;
+                height: 40px;
+                padding: 0 40px;
+                margin: 0;
+                display: inline-block;
+                appearance: none;
+                cursor: pointer;
+                border: none;
+                box-sizing: border-box;
+                transition-property: all;
+            }
+            .mp3-style {
+                height: 40px;
+    			border-bottom: 1px solid black;
+    			text-align: center;
+            }
+            .img-style {
+                display: none;
+                position: absolute;
+                right: 35px;
+                top:40px;
+                text-align: center;
+                transform: rotate(360deg);
+                -webkit-transform: rotate(360deg);
+                -webkit-animation: spin 5s linear infinite;
+                animation-play-state: paused;
+            }
+            .img-style-active {
+              animation-play-state: running;
+            }
+            .img-active {
+                display: inline-block;
+            }
+            .hide {
+    			display: none;
+    		}
+        </style>
+    </head>
+    <body>
+        <div class="viewport">
+            <!-- 时间 -->
+            <span id="id-currentTime" class="currentTime-style"></span>
+            <span id="id-duration" class="duration-style"></span>
+            <!-- 播放器 -->
+            <audio id="id-audio-player" class="audio-style" controls="controls" src="1.mp3"></audio>
+            <!-- 控制按钮 -->
+            <button id="gua-play-button" class="button-stlye button-play">></button>
+            <button id="gua-pause-button" class="button-stlye button-pause">||</button>
+            <button id="id-playerList" class="button-stlye button-playerList">列表</button>
+    		<button id="id-fun" class="button-stlye button-fun">随机</button>
+            <!-- 播放列表 -->
+    		<div id="playerList-main" class="songs-style hide">
+			<div id="id-mp3-1" class="mp3-style" data-path="1.mp3">Butter-fly</div>
+			<div id="id-mp3-2" class="mp3-style" data-path="2.mp3">九九八十一</div>
+			<div id="id-mp3-3" class="mp3-style" data-path="3.mp3">告白气球</div>
+    		</div>
+            <!-- 歌曲图片 -->
+    		<div id="id-img" >
+			<img id="id-img-1" class="img-style img-active" data-path="1.img" src="1.png">
+			<img id="id-img-2" class="img-style" data-path="2.img" src="2.png">
+			<img id="id-img-3" class="img-style" data-path="3.img" src="3.png">
+    		</div>
+            <!-- 功能列表 -->
+    		<div id="id-funList" class="funList-style hide ">
+    			<div id="id-circle" class="class-funList-style" data-func="1">单曲</div>
+    			<div id="id-order" class="class-funList-style" data-func="2">循环</div>
+    			<div id="id-random" class="class-funList-style" data-func="3">随机</div>
+    		</div>
+
+            <!-- 函数合集 -->
+        </div>
+        <script src="gua.js"></script>
+        <script>
+            var log = console.log.bind(console)
+
+            var e = function(selector) {
+                var element = document.querySelector(selector)
+                return element
+            }
+            var songs = ['1.mp3', '2.mp3', '3.mp3']
+            var eaudio = e('#id-audio-player')
+            //添加动画css
+            var showImageAtIndex = function(index) {
+                var nextIndex = index
+                var className = 'img-active'
+                removeClassAll(className)
+                var nextSelector = '#id-img-' + String(nextIndex)
+                var img = e(nextSelector)
+                img.classList.add(className)
+            }
+            //随机播放
+            var suiji = function() {
+                var index = Math.random()
+                log(index)
+                var index = Math.floor(index * 3)
+                log(index)
+                if (index != 3) {
+                    eaudio.src = songs[index]
+                } else {
+                    eaudio.src = songs[2]
+                }
+                eaudio.play()
+            }
+            var danqu = function() {
+            	eaudio.src = eaudio.src
+    			eaudio.play()
+            }
+            // 顺序播放的函数
+            var shunxu = function() {
+            	for (var i = 0; i < songs.length; i++) {
+                    if (eaudio.src.includes(songs[i])) {
+                        var a = (i + 1) % songs.length
+                        eaudio.src = songs[a]
+                        log("eaudio.src", eaudio.src)
+                        eaudio.play()
+                        break
+                    }
+                }
+            }
+            // 歌曲切换
+    		bindAll(".mp3-style", "click", function(event) {
+    			var target = event.target
+    			eaudio.src = target.dataset.path
+                var a = String(eaudio.src).slice(-5, -4)
+                showImageAtIndex(a)
+    			eaudio.play()
+    		})
+    		// 单曲循环、顺序列表、随机播放的按钮
+    		// 单曲循环按钮绑定
+    		var numb = 3
+            var idFun = e('#id-fun')
+    		bindAll("#id-circle", "click", function(event) {
+    			var target = event.target
+    			numb = target.dataset.func
+                idFun.innerHTML = target.innerHTML
+    		})
+    		// 顺序播放按钮绑定
+    		bindAll("#id-order", "click", function(event) {
+    			var target = event.target
+    			numb = target.dataset.func
+                idFun.innerHTML = target.innerHTML
+    		})
+    		// 随机播放按钮绑定
+    		bindAll("#id-random", "click", function(event) {
+    			var target = event.target
+    			numb = target.dataset.func
+                idFun.innerHTML = target.innerHTML
+    		})
+      		eaudio.addEventListener("ended", function(event) {
+      			if (numb == "1") {
+      				// 单曲循环
+      				log("1")
+    				danqu()
+      			} else if (numb == "2") {
+      				// 顺序播放
+      				log("2")
+    				shunxu()
+      			} else if (numb == "3") {
+      				// 随机播放
+      				log("3")
+    				suiji()
+      			}
+                var a = String(eaudio.src).slice(-5, -4)
+                showImageAtIndex(a)
+      		})
+            //旋转暂停
+            eaudio.addEventListener("pause", function(event) {
+                var img = e('.img-active')
+                    log('paused')
+                    img.classList.remove('img-style-active')
+            })
+            //旋转开始
+            eaudio.addEventListener("playing", function(event) {
+                var img = e('.img-active')
+                    log('playing')
+                    img.classList.add('img-style-active')
+
+            })
+            // 绑定播放按钮
+            var eplay = e('#gua-play-button')
+            eplay.addEventListener('click', function(event) {
+                log('start!')
+                var img = e('.img-style')
+                eaudio.play()
+            })
+            //绑定暂停按钮
+            var epause = e('#gua-pause-button')
+            epause.addEventListener('click', function(event) {
+                log('pause')
+                var img = e('.img-style')
+                eaudio.pause()
+            })
+            //当前时间
+            var currentTime = e('#id-currentTime')
+            setInterval(function() {
+                var a = eaudio.currentTime
+				var mintue = Math.floor(a / 60)
+				var second = Math.floor(a % 60)
+				if (mintue < 10) {
+					mintue = "0" + String(mintue)
+				} else {
+					String(mintue)
+				}
+				if (second < 10) {
+					second = "0" + String(second)
+				} else {
+					String(second)
+				}
+				currentTime.innerHTML = `${mintue}:${second}`
+			}, 1000)
+            //总时间
+            var duration = e('#id-duration')
+            eaudio.addEventListener('canplay', function(event) {
+                log('加载完毕')
+                var a = eaudio.duration
+        		var mintue = Math.floor(a / 60)
+        		var second = Math.floor(a % 60)
+        		if (mintue < 10) {
+        			mintue = "0" + String(mintue)
+        		} else {
+        			String(mintue)
+        		}
+        		if (second < 10) {
+        			second = "0" + String(second)
+        		} else {
+        			String(second)
+        		}
+        		duration.innerHTML = `${mintue}:${second}`
+            })
+            // 歌曲列表的显示和隐藏
+    		bindAll("#id-playerList", "click", function(event) {
+    			var target = event.target
+    			var a = e("#playerList-main")
+    			a.classList.toggle("hide")
+    		})
+    		// 功能列表的显示和隐藏
+    		bindAll("#id-fun", "click", function(event) {
+    			var a = e("#id-funList")
+    			a.classList.toggle("hide")
+    			bindAll(".class-funList-style", "click", function(event) {
+    				var target = event.target.parentElement
+    				target.classList.add("hide")
+    			})
+    		})
+
+        </script>
+    </body>
+</html>
