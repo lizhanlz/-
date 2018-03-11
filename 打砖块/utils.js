@@ -1,4 +1,5 @@
 var log = console.log.bind(console)
+//载入图片
 var imageFromPath = function(path) {
     var img = new Image()
     img.src = path
@@ -29,6 +30,7 @@ var Collide = function(a, b) {
     }
     return false
 }
+//另外两种判断方法
 // var Collide = function(a, b) {
 //     if (b.y > a.y && b.y < a.y + a.image.height) {
 //         if (b.x > a.x && b.x < a.x + a.image.width) {
