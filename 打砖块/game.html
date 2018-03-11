@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>game</title>
+        <style media="screen">
+            canvas {
+                border: 1px black solid;
+                background: lightblue;
+            }
+        </style>
+        <script src = 'guagame.js'></script>
+        <script src = 'ball.js'></script>
+        <script src = 'paddle.js'></script>
+        <script src = 'block.js'></script>
+        <script src = 'utils.js'></script>
+        <script src = 'gameover.js'></script>
+        <script src = 'win.js'></script>
+    </head>
+    <body>
+        <canvas id="id-canvas" width="800" height="600"></canvas>
+        <hr>
+        <div >速度</div>
+        <input id="id-input-speed" type="range" name="" value="1">
+<script>
+
+
+
+
+    var __main = function() {
+
+
+        var paddle = Paddle()
+        var game = GuaGame(60)
+        var ball = Ball()
+        var block = Block()
+        var gameover = Gameover()
+        var win = Win()
+        var score = 0
+        var blocks = []
+        var paused = false
+        for (var i = 0; i < 10; i++) {
+            var b = Block()
+            b.x = b.x + i * 60
+            b.y = 100
+            blocks.push(b)
+        }
+        //event
+        game.registerActions('a', function() {
+            paddle.moveLeft()
+
+        })
+        game.registerActions('d', function() {
+            paddle.moveRight()
+        })
+        game.registerActions('f', function() {
+            ball.fire()
+        })
+        window.addEventListener('keydown', function(event) {
+            if (event.key == 'p') {
+                paused = !paused
+            }
+
+        })
+        //控制 ball 的速度
+        document.querySelector('#id-input-speed').addEventListener('input', function(event) {
+            var input = event.target
+            if (input.value == '0') {
+                window.fps = 1
+            } else {
+                window.fps = Number(input.value)
+
+            }
+        })
+        game.update = function() {
+            if (paused) {
+                return
+            }
+            ball.move()
+            //判断相撞
+            if (paddle.collide(ball)) {
+                ball.rebound()
+            }
+            for (var i = 0; i < blocks.length; i++) {
+                var block = blocks[i]
+                if (block.collide(ball)) {
+                    block.kill()
+                    ball.rebound()
+                    score += 100
+
+                }
+            }
+
+        }
+        game.draw = function() {
+            //draw
+            game.drawImage(paddle)
+            game.drawImage(ball)
+            for (var i = 0; i < blocks.length; i++) {
+                var block = blocks[i]
+                if (block.alive) {
+                    game.drawImage(block)
+                }
+            }
+            if (ball.y > 570) {
+                game.drawImage(gameover)
+            }
+            if (score == 1000) {
+                game.drawImage(win)
+
+            }
+            //添加分数
+            game.context.font = "30px serif"
+            game.context.fillText('分数：' + score, 10, 30)
+        }
+    }
+
+
+    __main()
+</script>
+
+    </body>
+</html>
