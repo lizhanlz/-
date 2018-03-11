@@ -46,16 +46,20 @@
             blocks.push(b)
         }
         //event
+        //左移
         game.registerActions('a', function() {
             paddle.moveLeft()
 
         })
+        //右移
         game.registerActions('d', function() {
             paddle.moveRight()
         })
+        //发射
         game.registerActions('f', function() {
             ball.fire()
         })
+        //暂停
         window.addEventListener('keydown', function(event) {
             if (event.key == 'p') {
                 paused = !paused
@@ -72,6 +76,7 @@
 
             }
         })
+        //页面刷新
         game.update = function() {
             if (paused) {
                 return
@@ -96,15 +101,18 @@
             //draw
             game.drawImage(paddle)
             game.drawImage(ball)
+            //载入砖块
             for (var i = 0; i < blocks.length; i++) {
                 var block = blocks[i]
                 if (block.alive) {
                     game.drawImage(block)
                 }
             }
+            //判断 game over
             if (ball.y > 570) {
                 game.drawImage(gameover)
             }
+            //判断胜利
             if (score == 1000) {
                 game.drawImage(win)
 
